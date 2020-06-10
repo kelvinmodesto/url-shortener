@@ -1,0 +1,14 @@
+{
+  "name": "url-shortener",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "tsc:init": "./node_modules/.bin/tsc --init",
+    "run": "deno run -A src/server.ts"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.5"
+  },
+  "dependencies": {}
+}
