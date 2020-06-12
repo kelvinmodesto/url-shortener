@@ -5,7 +5,9 @@ import { ContextStrategy as Context } from '../base';
 export default class MongoDBStrategy extends Context {
   public static buildConnectionString() {}
 
-  public static connect() {}
+  public static connect() {
+    this.connect()
+  }
   public connection: any;
   public model: any;
 
