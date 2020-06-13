@@ -21,6 +21,7 @@ export default function getEnvironmentValues() {
       DB_USER_MONGO,
       DB_PORT_MONGO
     },
-    PORT
+    PORT,
+    URL
   }
 }
