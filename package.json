@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "tsc:init": "./node_modules/.bin/tsc --init",
-    "run": "deno run -A --unstable src/server.ts"
+    "run": "deno run -A --unstable src/app.ts",
+    "test": "deno test -A --unstable"
   },
   "devDependencies": {
     "typescript": "^3.9.5"

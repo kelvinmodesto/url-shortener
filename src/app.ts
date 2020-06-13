@@ -1,5 +1,5 @@
 import * as expressive from 'https://raw.githubusercontent.com/NMathar/deno-express/master/mod.ts';
-import getEnvironmentValues from './utils/env/getEnvironmentValues.ts';
+import getEnvironmentValues from './utils/getEnvironmentValues.ts';
 
 const { PORT } = getEnvironmentValues();
 
