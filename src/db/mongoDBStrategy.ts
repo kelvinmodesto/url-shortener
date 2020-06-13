@@ -1,13 +1,22 @@
 import { MongoClient } from 'https://deno.land/x/mongo@v0.8.0/mod.ts';
 
-import ContextStrategy from './contextStrategy.ts';
+import IDb from './db.interface.ts';
 import getEnvironmentValues from '../utils/getEnvironmentValues.ts';
 
-export default class MongoDBStrategy extends ContextStrategy {
-  public connection: any;
+export default class MongoDBStrategy implements IDb{
   public model: any;
-  public static client: MongoClient;
-  static async connect() {
+  public modelName: string;
+  public client: MongoClient;
+  public database: any;
+
+  constructor(modelName: string) {
+    this.client = {} as MongoClient;
+    this.modelName = modelName;
+    this.connect();
+  }
+
+  connect() {
+    const client = new MongoClient();
     const {
       mongo: {
         DB_MONGO: db,
@@ -18,29 +27,41 @@ export default class MongoDBStrategy extends ContextStrategy {
         DB_PORT_MONGO: port
       }
     } = getEnvironmentValues();
-    await this.client.connectWithUri(`${db}://${user}:${pass}@${host}:${port}/${name}`);
-    return this.client.database(name);
+    client.connectWithUri(`${db}://${user}:${pass}@${host}:${port}/${name}`);
+    this.client = client;
+    this.model = client.database(name).collection(this.modelName);
   }
 
-  constructor(connection: any, model: string) {
-    super(connection);
-    this.connection = connection;
-    this.model = connection.collection(model);
+  async create(item: any = {}, many: boolean = false) {
+    if (many) {
+      return await this.model.insertMany(item);
+    } else {
+      return await this.model.insertOne(item);
+    }
   }
 
-  public async create(item: any = {}, many: boolean = false) {
-    return  many ? this.model.insertMany(item) : this.model.insertOne(item);
+  async read(item: any = {}, many: boolean = false) {
+    if (many) {
+      return await this.model.findOne(item);
+    } else {
+      return await this.model.find(item);
+    }
   }
 
-  public async read(item: any = {}, many: boolean = false) {
-    return many ? this.model.findOne(item) : this.model.find(item);
+  async update(id: number, item: any = {}, many: boolean = false) {
+    if (many) {
+      return await this.model.updateMany({ _id: id }, { $set: item });
+    } else {
+      return await this.model.updateOne(item);
+    }
   }
 
-  public async update(id: number, item: any = {}, many: boolean = false) {
-    return many ? this.model.updateMany({ _id: id }, { $set: item }) : this.model.updateOne(item);
+  async delete(id: number, many: boolean = false) {
+    if (many) {
+      return await this.model.deleteMany({});
+    } else {
+      return await this.model.deleteOne({ _id: id });
+    }
   }
 
-  public async delete(id: number, many: boolean = false) {
-    return many ? this.model.deleteMany({}) : this.model.deleteOne({ _id: id });
-  }
 }
