@@ -5,27 +5,20 @@ export default class ContextStrategy implements IDb {
   constructor(database: any) {
     this.database = database;
   }
-  public create(item: any = {}) {
+  public create(item: any = {}, many: boolean = false) {
     return this.database.create(item);
   }
 
-  public read(item: any = {}) {
+  public read(item: any = {}, many: boolean = false) {
     return this.database.read(item);
   }
 
-  public update(id: number, item: any = {}) {
+  public update(id: number, item: any = {}, many: boolean = false) {
     return this.database.update(id, item);
   }
 
-  public delete(id: number) {
+  public delete(id: number, many: boolean = false) {
     return this.database.delete(id);
   }
 
-  public isConnected() {
-    return this.database.isConnected();
-  }
-
-  public connect() {
-    return this.database.connect();
-  }
 }
