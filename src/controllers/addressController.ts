@@ -1,4 +1,4 @@
-export default class UrlController {
+export class AddressController {
   public router: any;
   public context: any;
   constructor(router: any, context: any) {
