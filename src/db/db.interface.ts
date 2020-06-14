@@ -3,8 +3,9 @@ export default interface IDb {
 
   read(item: any, many: boolean): any;
 
-  update(id: number, item: number, many: boolean): any;
+  update(id: string, item: any, many: boolean): any;
 
-  delete(id: number, many: boolean): any;
+  delete(id: string, item: any): any;
 
+  isConnected(): Promise<boolean>;
 }

@@ -1,4 +1,4 @@
-import { MongoClient } from 'https://deno.land/x/mongo@v0.8.0/mod.ts';
+import { MongoClient, ObjectId } from 'https://deno.land/x/mongo@v0.8.0/mod.ts';
 
 import IDb from './db.interface.ts';
 import getEnvironmentValues from '../utils/getEnvironmentValues.ts';
@@ -8,15 +8,31 @@ export default class MongoDBStrategy implements IDb{
   public modelName: string;
   public client: MongoClient;
   public database: any;
+  public dbURL: string;
+  public dbName: string;
 
   constructor(modelName: string) {
     this.client = {} as MongoClient;
     this.modelName = modelName;
+    this.dbURL = this.buildConnectionString();
+    this.dbName = this.getDatabase();
     this.connect();
   }
 
-  connect() {
-    const client = new MongoClient();
+  changeModel(newModel: string): void {
+    this.model = this.client.database(this.dbName).collection(this.modelName);
+  }
+
+  getDatabase(): string {
+    const {
+      mongo: {
+        DB_NAME_MONGO: name,
+      }
+    } = getEnvironmentValues();
+    return name;
+  }
+
+  buildConnectionString(): string {
     const {
       mongo: {
         DB_MONGO: db,
@@ -27,9 +43,24 @@ export default class MongoDBStrategy implements IDb{
         DB_PORT_MONGO: port
       }
     } = getEnvironmentValues();
-    client.connectWithUri(`${db}://${user}:${pass}@${host}:${port}/${name}`);
+    return `${db}://${user}:${pass}@${host}:${port}/${name}`;
+  }
+
+  connect() {
+    const client = new MongoClient();
+
+    client.connectWithUri(this.dbURL);
     this.client = client;
-    this.model = client.database(name).collection(this.modelName);
+    this.model = this.client.database(this.dbName).collection(this.modelName);
+  }
+
+  getClient(): MongoClient {
+    return this.client;
+  }
+
+  async isConnected(): Promise<boolean> {
+    const names = await this.client.listDatabases();
+    return names.length > 0;
   }
 
   async create(item: any = {}, many: boolean = false) {
@@ -42,26 +73,22 @@ export default class MongoDBStrategy implements IDb{
 
   async read(item: any = {}, many: boolean = false) {
     if (many) {
-      return await this.model.findOne(item);
-    } else {
       return await this.model.find(item);
+    } else {
+      return await this.model.findOne(item);
     }
   }
 
-  async update(id: number, item: any = {}, many: boolean = false) {
+  async update(id: string, item: any = {}, many: boolean = false) {
     if (many) {
-      return await this.model.updateMany({ _id: id }, { $set: item });
+      return await this.model.updateMany( { $set: item });
     } else {
-      return await this.model.updateOne(item);
+      return await this.model.updateOne({ _id: { $oid: id } }, { $set: item });
     }
   }
 
-  async delete(id: number, many: boolean = false) {
-    if (many) {
-      return await this.model.deleteMany({});
-    } else {
-      return await this.model.deleteOne({ _id: id });
-    }
+  async delete(id: string, item = {}) {
+    return await this.model.deleteOne({ _id: id });
   }
 
 }
