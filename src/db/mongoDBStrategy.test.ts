@@ -45,18 +45,6 @@ Deno.test('check if was successfully insert one', async () => {
   });
 });
 
-Deno.test('check if was successfully insert many', async () => {
-  await cleanCollection();
-
-  await mongoDBStrategy.create([MOCK_ADDRESS, MOCK_SECOND_ADDRESS], true);
-
-  const addresses = await address.find({
-    date: dateNow
-  });
-  assertEquals(addresses.length, 2);
-
-});
-
 Deno.test('check if was successfully read one', async () => {
   await cleanCollection();
 

@@ -63,12 +63,8 @@ export default class MongoDBStrategy implements IDb{
     return names.length > 0;
   }
 
-  async create(item: any = {}, many: boolean = false) {
-    if (many) {
-      return await this.model.insertMany(item);
-    } else {
-      return await this.model.insertOne(item);
-    }
+  async create(item: any = {}) {
+    return await this.model.insertOne(item);
   }
 
   async read(item: any = {}, many: boolean = false) {
@@ -79,12 +75,8 @@ export default class MongoDBStrategy implements IDb{
     }
   }
 
-  async update(id: string, item: any = {}, many: boolean = false) {
-    if (many) {
-      return await this.model.updateMany( { $set: item });
-    } else {
-      return await this.model.updateOne({ _id: { $oid: id } }, { $set: item });
-    }
+  async update(id: string, item: any = {}) {
+    return await this.model.updateOne({ _id: { $oid: id } }, { $set: item });
   }
 
   async delete(id: string, item = {}) {
