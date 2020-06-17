@@ -1,11 +1,18 @@
-import * as expressive from 'https://raw.githubusercontent.com/NMathar/deno-express/master/mod.ts';
+import { Application } from 'https://deno.land/x/oak/mod.ts';
+import errorMiddleware from './middlewares/error.ts';
 import getEnvironmentValues from './utils/getEnvironmentValues.ts';
+import notFound from './routes/handlers/notFound.ts';
+import addressRouter from './routes/addressRouter.ts';
 
-const { PORT } = getEnvironmentValues();
+const { PORT, URL } = getEnvironmentValues();
+const router = addressRouter();
 
-const port = PORT || 2000;
-// const app = new expressive.App();
-// app.use(expressive.simpleLog());
-// app.use(expressive.static_("./public"));
-// app.use(expressive.bodyParser.json());
-// const server = await app.listen(port);
+const app = new Application();
+const port = parseInt(PORT) || 2000;
+app.use(errorMiddleware);
+app.use(router.routes());
+app.use(router.allowedMethods());
+app.use(notFound);
+
+console.log(`Listening on ${URL}...`);
+await app.listen({ port });
