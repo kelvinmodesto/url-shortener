@@ -9,13 +9,13 @@ const address = db.collection('address');
 
 const dateNow = Date.now();
 const MOCK_ADDRESS = {
-  URL: 'http://deno.land',
-  encodedURL: 'abc123456',
+  url: 'http://deno.land',
+  encodedUrl: 'abc123456',
   date: dateNow
 };
 const MOCK_SECOND_ADDRESS = {
-  URL: 'http://node.org',
-  encodedURL: 'node123',
+  url: 'http://node.org',
+  encodedUrl: 'node123',
   date: dateNow
 };
 
@@ -39,8 +39,8 @@ Deno.test('check if was successfully insert one', async () => {
 
   assertEquals(addressId, {
     _id: insertId,
-    URL: 'http://deno.land',
-    encodedURL: 'abc123456',
+    url: 'http://deno.land',
+    encodedUrl: 'abc123456',
     date: dateNow
   });
 });
@@ -54,8 +54,8 @@ Deno.test('check if was successfully read one', async () => {
 
   assertEquals(addressId, {
     _id: insertId,
-    URL: 'http://deno.land',
-    encodedURL: 'abc123456',
+    url: 'http://deno.land',
+    encodedUrl: 'abc123456',
     date: dateNow
   });
 });
@@ -77,8 +77,8 @@ Deno.test('check if was successfully update one', async () => {
 
   const insertId: ObjectId = await address.insertOne(MOCK_ADDRESS);
   const result = await mongoDBStrategy.update(insertId.$oid, {
-    URL: 'https://nodejs.org/',
-    encodedURL: 'node123',
+    url: 'https://nodejs.org/',
+    encodedUrl: 'node123',
   });
   const addressId = await address.findOne({
     _id: ObjectId(insertId.$oid)
@@ -88,8 +88,8 @@ Deno.test('check if was successfully update one', async () => {
   assertEquals(result.modifiedCount, 1);
   assertEquals(addressId, {
     _id: insertId,
-    URL: 'https://nodejs.org/',
-    encodedURL: 'node123',
+    url: 'https://nodejs.org/',
+    encodedUrl: 'node123',
     date: dateNow
   });
 });

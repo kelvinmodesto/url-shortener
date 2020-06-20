@@ -1,4 +1,4 @@
-import { MongoClient, ObjectId } from 'https://deno.land/x/mongo@v0.8.0/mod.ts';
+import { MongoClient } from 'https://deno.land/x/mongo@v0.8.0/mod.ts';
 
 import IDb from './db.interface.ts';
 import getEnvironmentValues from '../utils/getEnvironmentValues.ts';
