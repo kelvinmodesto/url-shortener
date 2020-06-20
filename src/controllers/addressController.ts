@@ -1,4 +1,5 @@
 import { Request, Response, RouteParams } from 'https://deno.land/x/oak/mod.ts';
+import createId from '../utils/createId.ts';
 
 export class AddressController {
   public router: any;
@@ -20,7 +21,7 @@ export class AddressController {
       { request, response }: { request: Request; response: Response; }) => {
       if (!request.hasBody) {
         response.status = 400;
-        response.body = { msg: "Invalid URL data" };
+        response.body = { msg: "Invalid url data" };
         return;
       }
 
@@ -30,11 +31,11 @@ export class AddressController {
 
       if (!url) {
         response.status = 422;
-        response.body = { msg: "Incorrect address data. URL are required" };
+        response.body = { msg: "Incorrect address data. url are required" };
         return;
       }
 
-      const addressId = await this.context.create({ url });
+      const addressId = await this.context.create({ url, encodedUrl: createId() });
 
       response.body = { msg: "Address created", addressId };
     });
@@ -84,12 +85,12 @@ export class AddressController {
       }
 
       const {
-        value: { URL }
+        value: { url }
       } = await request.body();
 
-      await this.context.update(addressId, { URL });
+      await this.context.update(addressId, { url });
 
-      response.body = { msg: "URL updated" };
+      response.body = { msg: "url updated" };
     });
   }
   deleteAddress() {
@@ -104,8 +105,8 @@ export class AddressController {
         return;
       }
 
-      const foundUser = await this.context.read(addressId);
-      if (!foundUser) {
+      const foundAddress = await this.context.read(addressId);
+      if (!foundAddress) {
         response.status = 404;
         response.body = { msg: `Address with ID ${addressId} not found` };
         return;
